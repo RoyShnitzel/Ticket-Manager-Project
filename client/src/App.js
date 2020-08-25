@@ -12,7 +12,6 @@ function App() {
         console.log(error);
         alert('Tickets Do Not Exist');
       });
-    console.log(data);
     setTickets(data);
   }
   useEffect(() => {
@@ -24,13 +23,47 @@ function App() {
     setTickets(data)
   }
 
+  function hideTicket (id) {
+    setTickets((prevTickets)=> {
+      const newTickets = prevTickets.map(ticket=> {
+        if (ticket.id === id) {
+          ticket.hide = true
+          return ticket
+        } else {
+          return ticket
+        }
+      })
+      return newTickets
+    })
+  }
+
+  function restoreTickets () {
+    setTickets((prevTickets=> {
+      const newTickets = prevTickets.map(ticket=>{
+        ticket.hide= false
+        return ticket
+      })
+      return newTickets
+    }))
+  }
+
+  const displayedTickets=tickets.filter(ticket=> !Boolean(ticket.hide))
+  const hideCounter=tickets.length-displayedTickets.length
+  const results=tickets.length
   return (
     <main className='app'>
       <div className='navbar'>
       <h1>Tickets Manager</h1>
       <SearchInput func={searchFunc}/>
       </div>
-      <TicketsList data={tickets} />
+      { hideCounter>0 ? <div className='hideTicketsCounter'>
+      <span>Showing <b>{results}</b> Results </span>
+      <span>(</span>
+      <span id='hideTicketsCounter'><b>{hideCounter}</b></span>
+      <span> Hidden Tickets)</span>
+      <button id='restoreHideTickets' onClick={()=>restoreTickets()}>restore <i class="fa fa-undo" aria-hidden="true"></i></button>
+      </div>: <div className='hideTicketsCounter'>Showing <b>{results}</b> Results</div> }
+      <TicketsList data={displayedTickets} hideFunc={hideTicket}/>
     </main>
   );
 }

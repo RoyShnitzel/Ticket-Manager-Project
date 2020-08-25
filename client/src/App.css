@@ -82,14 +82,12 @@
 }
 
 h1 {
-    display: inline;
     color: white;
     font-size: 40px;
     text-shadow: 2.5px 0px #323e47;
 }
 
 .ticketlist {
-   padding-top:100px;
    display: flex;
    flex-flow: column;
    align-items: center;
@@ -125,3 +123,37 @@ h1 {
     background: #555; 
     border-radius: 10px;
   }
+
+  .hideTicketsCounter {
+    padding-top:90px;
+    padding-bottom: 10px;
+    text-align: center;
+    font-size: smaller;
+    color: gray;
+    font-family:'Exo';
+  }
+
+  #hideTicketButton {
+      background-color: transparent;
+      border: transparent;
+  }
+
+  #hideTicketButton:focus {
+    outline:none ;
+ }
+
+  .flexheader {
+      display: flex;
+      justify-content: space-between;
+  }
+
+  #restoreHideTickets {
+    background-color: transparent;
+    border: transparent;
+    font-family:'Exo';
+    font-weight: bold;
+  }
+
+  #restoreHideTickets:focus {
+    outline:none ;
+ }
