@@ -20,14 +20,16 @@ function App() {
   }, []);
 
   async function searchFunc(val) {
-    const { data }= await axios.get(`/api/tickets/?searchText=${val}`)
+    const { data }= await axios.get(`/api/tickets?searchText=${val}`)
     setTickets(data)
   }
 
   return (
-    <main>
-      <h1>Ticket Manager</h1>
+    <main className='app'>
+      <div className='navbar'>
+      <h1>Tickets Manager</h1>
       <SearchInput func={searchFunc}/>
+      </div>
       <TicketsList data={tickets} />
     </main>
   );

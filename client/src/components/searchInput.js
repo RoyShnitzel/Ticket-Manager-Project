@@ -5,7 +5,7 @@ function SearchInput(props) {
 const onSearch= props.func
 
   return (
-    <input placeholder='Search...' onChange={(e)=> onSearch(e.target.value)} id='searchInput'/>
+    <div className='search'><i className="fa fa-search"></i><input  onChange={(e)=> onSearch(e.target.value)} id='searchInput'/></div>
   );
 }
 

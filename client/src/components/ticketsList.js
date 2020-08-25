@@ -11,9 +11,9 @@ function TicketsList(props) {
   }
   const newData = props.data;
   return (
-    <main>
+    <div className='ticketlist'>
       {makeTicketsList(newData)}
-    </main>
+    </div>
   );
 }
 

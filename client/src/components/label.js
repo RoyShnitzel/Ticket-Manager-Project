@@ -4,12 +4,12 @@ function Label(props) {
   const data = props.label
   console.log (data)
   const displayData = data.map((label)=> {
-      return <div key ={label} className='label'>{label}</div>
+      return <span key ={label} className='label'>#{label}</span>
   })  
   return (
-    <div>
+    <span>
     {displayData}
-    </div>
+    </span>
   );
 }
 
