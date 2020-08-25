@@ -1,16 +1,20 @@
 /* eslint-disable react/destructuring-assignment */
 /* eslint-disable react/prop-types */
 import React from 'react';
-
+import Label from './label';
 function Ticket(props) {
   const data = props.ticketData;
+  const labelData = data.labels;
+  const time = new Date(data.creationTime)
+  const newTime = time.toString()
+  console.log(newTime)
   return (
-    <div>
-      <div>{data.title}</div>
+    <div className="ticket">
+      <h4>{data.title}</h4>
       <div>{data.content}</div>
       <div>{data.userEmail}</div>
-      <div>{data.creationTime}</div>
-
+      <div>{newTime}</div>
+      {labelData !== undefined ?<Label className='label' label={labelData}/>:null}
     </div>
   );
 }

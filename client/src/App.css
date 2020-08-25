@@ -1,0 +1,17 @@
+.ticket {
+    box-sizing: border-box;
+    width: 50%;
+    border: 2px solid black;
+    border-radius: 15px;
+    margin: 10px 10px 10px 10px;
+    padding: 10px 10px 10px 10px;
+}
+
+.label {
+    box-sizing: border-box;
+    border: 1px solid black;
+    background-color: cornflowerblue;
+    width: fit-content;
+    padding: 3px 3px 3px 3px;
+    margin: 2px 2px 2px 2px;
+}
