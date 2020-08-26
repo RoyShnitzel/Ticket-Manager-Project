@@ -6,13 +6,11 @@ import SearchInput from './components/searchInput';
 
 function App() {
   const [tickets, setTickets] = useState([]);
-  const [displayFavorites,setDisplayFavorites] = useState (false)
+  const [displayFavorites, setDisplayFavorites] = useState(false);
   async function getTicketsFromServer() {
-    const { data } = await axios.get('/api/tickets')
-      .catch((error) => {
-        console.log(error);
-        alert('Tickets Do Not Exist');
-      });
+    const { data } = await axios.get('/api/tickets').catch(() => {
+      alert('Tickets Do Not Exist');
+    });
     setTickets(data);
   }
   useEffect(() => {
@@ -20,95 +18,122 @@ function App() {
   }, []);
 
   async function searchFunc(val) {
-    const { data }= await axios.get(`/api/tickets?searchText=${val}`)
-    setTickets(data)
-    setDisplayFavorites(false)
+    const { data } = await axios.get(`/api/tickets?searchText=${val}`);
+    setTickets(data);
+    setDisplayFavorites(false);
   }
 
-  function hideTicket (id) {
-    setTickets((prevTickets)=> {
-      const newTickets = prevTickets.map(ticket=> {
+  function hideTicket(id) {
+    setTickets((prevTickets) => {
+      const newTickets = prevTickets.map((ticket) => {
         if (ticket.id === id) {
-          ticket.hide = true
-          return ticket
-        } else {
-          return ticket
+          ticket.hide = true;
+          return ticket;
         }
-      })
-      return newTickets
-    })
+        return ticket;
+      });
+      return newTickets;
+    });
   }
 
-  function favoriteTicket (id) {
-     setTickets((prevTickets)=> {
-      const newTickets = prevTickets.map(ticket=> {
+  function favoriteTicket(id) {
+    setTickets((prevTickets) => {
+      const newTickets = prevTickets.map((ticket) => {
         if (ticket.id === id) {
-         ticket.favorite= true
-         return ticket
-        } else {
-          return ticket
+          ticket.favorite = true;
+          return ticket;
         }
-      })
-      return newTickets
-    })
+        return ticket;
+      });
+      return newTickets;
+    });
   }
 
-  function unFavoriteTicket (id) {
-    setTickets((prevTickets)=> {
-     const newTickets = prevTickets.map(ticket=> {
-       if (ticket.id === id) {
-        ticket.favorite= false
-        return ticket
-       } else {
-         return ticket
-       }
-     })
-     return newTickets
-   })
- }
- 
- function handleFavorite (id, favorite) {
-  if (favorite) {
-    unFavoriteTicket(id)
-  }else {
-    favoriteTicket(id)
-  }
- }
-
-  function restoreTickets () {
-    setTickets((prevTickets=> {
-      const newTickets = prevTickets.map(ticket=>{
-        ticket.hide= false
-        return ticket
-      })
-      return newTickets
-    }))
+  function unFavoriteTicket(id) {
+    setTickets((prevTickets) => {
+      const newTickets = prevTickets.map((ticket) => {
+        if (ticket.id === id) {
+          ticket.favorite = false;
+          return ticket;
+        }
+        return ticket;
+      });
+      return newTickets;
+    });
   }
 
+  function handleFavorite(id, favorite) {
+    if (favorite) {
+      unFavoriteTicket(id);
+    } else {
+      favoriteTicket(id);
+    }
+  }
 
-  
-  const displayedTickets=tickets.filter(ticket=> !Boolean(ticket.hide))
-  const favoriteTickets=displayedTickets.filter(ticket=> Boolean(ticket.favorite))
-  const hideCounter=tickets.length-displayedTickets.length
-  const results=tickets.length
-  const favoriteResults=favoriteTickets.length
+  function restoreTickets() {
+    setTickets((prevTickets) => {
+      const newTickets = prevTickets.map((ticket) => {
+        ticket.hide = false;
+        return ticket;
+      });
+      return newTickets;
+    });
+  }
+
+  const displayedTickets = tickets.filter((ticket) => !ticket.hide);
+  const favoriteTickets = displayedTickets.filter((ticket) => Boolean(ticket.favorite));
+  const hideCounter = tickets.length - displayedTickets.length;
+  const results = tickets.length;
+  const favoriteResults = favoriteTickets.length;
 
   return (
-    <main className='app'>
-      <div className='navbar'>
-      <h1>Tickets Manager</h1>
-      <SearchInput func={searchFunc}/>
-      <button className='favoritesDisplay' onClick={()=>setDisplayFavorites((prevFavorite)=>!prevFavorite)}>
-        <i className='fa fa-star fa-2x'></i><span className="toolTipFavorite">Display Favorites</span></button>
+    <main className="app">
+      <div className="navbar">
+        <h1>Tickets Manager</h1>
+        <SearchInput func={searchFunc} />
+        <button
+          className="favoritesDisplay"
+          onClick={() => setDisplayFavorites((prevFavorite) => !prevFavorite)}
+        >
+          <i className="fa fa-star fa-2x" />
+          <span className="toolTipFavorite">Display Favorites</span>
+        </button>
       </div>
-      { hideCounter>0 ? <div className='hideTicketsCounter'>
-      <span>Showing <b>{displayFavorites? favoriteResults:results}</b> Results </span>
-      <span>(</span>
-      <span id='hideTicketsCounter'><b>{hideCounter}</b></span>
-      <span> Hidden Tickets)</span>
-      <button id='restoreHideTickets' onClick={()=>restoreTickets()}>restore <i className="fa fa-undo" aria-hidden="true"></i></button>
-      </div>: <div className='hideTicketsCounter'>Showing <b>{displayFavorites? favoriteResults:results}</b> Results</div> }
-      <TicketsList data={displayFavorites? favoriteTickets:displayedTickets} hideFunc={hideTicket} favoriteFunc={handleFavorite}/>
+      {hideCounter > 0 ? (
+        <div className="hideTicketsCounter">
+          <span>
+            Showing
+            {' '}
+            <b>{displayFavorites ? favoriteResults : results}</b>
+            {' '}
+            Results
+            {' '}
+          </span>
+          <span>(</span>
+          <span id="hideTicketsCounter">
+            <b>{hideCounter}</b>
+          </span>
+          <span> Hidden Tickets)</span>
+          <button id="restoreHideTickets" onClick={() => restoreTickets()}>
+            restore
+            {' '}
+            <i className="fa fa-undo" aria-hidden="true" />
+          </button>
+        </div>
+      ) : (
+        <div className="hideTicketsCounter">
+          Showing
+          {' '}
+          <b>{displayFavorites ? favoriteResults : results}</b>
+          {' '}
+          Results
+        </div>
+      )}
+      <TicketsList
+        data={displayFavorites ? favoriteTickets : displayedTickets}
+        hideFunc={hideTicket}
+        favoriteFunc={handleFavorite}
+      />
     </main>
   );
 }
