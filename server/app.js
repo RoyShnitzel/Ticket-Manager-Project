@@ -7,28 +7,35 @@ app.use(express.static('/build/index.html'));
 app.get('/api/tickets', (request, response) => {
   const data = fs.readFileSync('./data.json');
   const tickets = JSON.parse(data);
-  console.log(request.query.searchText);
+
   if (request.query.searchText) {
     const queryParam = request.query.searchText.toLowerCase();
-    const newTicket = tickets.filter((ticket) => {
-      const filterTicket = ticket.title.toLowerCase();
-      return filterTicket.includes(queryParam);
+    const newTickets = tickets.filter((ticket) => {
+      const filterTickets = ticket.title.toLowerCase();
+
+      if (queryParam.indexOf('#') === 0) {
+        if (!ticket.labels) {
+          return false;
+        }
+        const filterLabels = ticket.labels.map((element) => element.toLowerCase());
+
+        return filterLabels.some((label) => label.includes(queryParam.replace('#', '')));
+      }
+      return filterTickets.includes(queryParam);
     });
-    response.send(newTicket);
+    response.send(newTickets);
   } else {
     response.send(tickets);
   }
 });
 
 app.post('/api/tickets/:ticketId/done', (request, response) => {
-  console.log(request.params.ticketId);
   const data = fs.readFileSync('./data.json');
   const tickets = JSON.parse(data);
   const doneTickets = tickets.map((ticket) => {
     if (ticket.id === request.params.ticketId) {
       // eslint-disable-next-line no-param-reassign
       ticket.done = true;
-      console.log(ticket);
       response.send(ticket);
       return ticket;
     }
@@ -40,14 +47,12 @@ app.post('/api/tickets/:ticketId/done', (request, response) => {
 });
 
 app.post('/api/tickets/:ticketId/undone', (request, response) => {
-  console.log(request.params.ticketId);
   const data = fs.readFileSync('./data.json');
   const tickets = JSON.parse(data);
   const doneTickets = tickets.map((ticket) => {
     if (ticket.id === request.params.ticketId) {
       // eslint-disable-next-line no-param-reassign
       ticket.done = false;
-      console.log(ticket);
 
       response.send(ticket);
       return ticket;

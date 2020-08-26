@@ -18,7 +18,8 @@ function App() {
   }, []);
 
   async function searchFunc(val) {
-    const { data } = await axios.get(`/api/tickets?searchText=${val}`);
+    const codedVal=encodeURIComponent(val)
+    const { data } = await axios.get(`/api/tickets?searchText=${codedVal}`);
     setTickets(data);
     setDisplayFavorites(false);
   }
