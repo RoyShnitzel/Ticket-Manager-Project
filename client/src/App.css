@@ -126,7 +126,11 @@ body {
     color: white;
 }
 .fa-star {
-    color: rgb(158, 136, 62);
+    color: rgb(189, 160, 68);
+}
+
+.fa-star-o {
+    color: rgb(189, 160, 68);
 }
 
 .fa-times{
