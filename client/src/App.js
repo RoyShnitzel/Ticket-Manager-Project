@@ -6,6 +6,7 @@ import SearchInput from './components/searchInput';
 
 function App() {
   const [tickets, setTickets] = useState([]);
+  const [displayFavorites,setDisplayFavorites] = useState (false)
   async function getTicketsFromServer() {
     const { data } = await axios.get('/api/tickets')
       .catch((error) => {
@@ -21,6 +22,7 @@ function App() {
   async function searchFunc(val) {
     const { data }= await axios.get(`/api/tickets?searchText=${val}`)
     setTickets(data)
+    setDisplayFavorites(false)
   }
 
   function hideTicket (id) {
@@ -37,6 +39,42 @@ function App() {
     })
   }
 
+  function favoriteTicket (id) {
+     setTickets((prevTickets)=> {
+      const newTickets = prevTickets.map(ticket=> {
+        if (ticket.id === id) {
+         ticket.favorite= true
+         return ticket
+        } else {
+          return ticket
+        }
+      })
+      return newTickets
+    })
+  }
+
+  function unFavoriteTicket (id) {
+    setTickets((prevTickets)=> {
+     const newTickets = prevTickets.map(ticket=> {
+       if (ticket.id === id) {
+        ticket.favorite= false
+        return ticket
+       } else {
+         return ticket
+       }
+     })
+     return newTickets
+   })
+ }
+ 
+ function handleFavorite (id, favorite) {
+  if (favorite) {
+    unFavoriteTicket(id)
+  }else {
+    favoriteTicket(id)
+  }
+ }
+
   function restoreTickets () {
     setTickets((prevTickets=> {
       const newTickets = prevTickets.map(ticket=>{
@@ -47,23 +85,30 @@ function App() {
     }))
   }
 
+
+  
   const displayedTickets=tickets.filter(ticket=> !Boolean(ticket.hide))
+  const favoriteTickets=displayedTickets.filter(ticket=> Boolean(ticket.favorite))
   const hideCounter=tickets.length-displayedTickets.length
   const results=tickets.length
+  const favoriteResults=favoriteTickets.length
+
   return (
     <main className='app'>
       <div className='navbar'>
       <h1>Tickets Manager</h1>
       <SearchInput func={searchFunc}/>
+      <button className='favoritesDisplay' onClick={()=>setDisplayFavorites((prevFavorite)=>!prevFavorite)}>
+        <i className='fa fa-star fa-2x'></i><span className="toolTipFavorite">Display Favorites</span></button>
       </div>
       { hideCounter>0 ? <div className='hideTicketsCounter'>
-      <span>Showing <b>{results}</b> Results </span>
+      <span>Showing <b>{displayFavorites? favoriteResults:results}</b> Results </span>
       <span>(</span>
       <span id='hideTicketsCounter'><b>{hideCounter}</b></span>
       <span> Hidden Tickets)</span>
-      <button id='restoreHideTickets' onClick={()=>restoreTickets()}>restore <i class="fa fa-undo" aria-hidden="true"></i></button>
-      </div>: <div className='hideTicketsCounter'>Showing <b>{results}</b> Results</div> }
-      <TicketsList data={displayedTickets} hideFunc={hideTicket}/>
+      <button id='restoreHideTickets' onClick={()=>restoreTickets()}>restore <i className="fa fa-undo" aria-hidden="true"></i></button>
+      </div>: <div className='hideTicketsCounter'>Showing <b>{displayFavorites? favoriteResults:results}</b> Results</div> }
+      <TicketsList data={displayFavorites? favoriteTickets:displayedTickets} hideFunc={hideTicket} favoriteFunc={handleFavorite}/>
     </main>
   );
 }

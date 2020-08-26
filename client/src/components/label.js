@@ -4,7 +4,7 @@ function Label(props) {
   const data = props.label
   
   const displayData = data.map((label)=> {
-      return <span key ={label} className='label'>{label}</span>
+      return <span key ={label} className='label1'>#<span className='label'>{label}</span></span>
   })  
   return (
     <span>
