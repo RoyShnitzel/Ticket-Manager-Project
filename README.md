@@ -58,6 +58,7 @@ Use a popular style guide - Airbnb
 1. Create a Pull Request from the new brunch into master in your duplicated repository
 
 
+
 ## Grading policy
 * Your project will be graded by the number of automatic tests you pass
 * Visual creativity, use css to make this app look awesome 💅🏿
