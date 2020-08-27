@@ -18,7 +18,7 @@ function App() {
   }, []);
 
   async function searchFunc(val) {
-    const codedVal=encodeURIComponent(val)
+    const codedVal = encodeURIComponent(val);
     const { data } = await axios.get(`/api/tickets?searchText=${codedVal}`);
     setTickets(data);
     setDisplayFavorites(false);
@@ -96,9 +96,17 @@ function App() {
           className="favoritesDisplay"
           onClick={() => setDisplayFavorites((prevFavorite) => !prevFavorite)}
         >
-          {displayFavorites? <><i className="fa fa-star fa-2x" />
-          <span className="toolTipFavorite">Display All</span></>:<><i className="fa fa-star-o fa-2x" />
-          <span className="toolTipFavorite">Display Favorites</span></>}
+          {displayFavorites ? (
+            <>
+              <i className="fa fa-star fa-2x" />
+              <span className="toolTipFavorite">Display All</span>
+            </>
+          ) : (
+            <>
+              <i className="fa fa-star-o fa-2x" />
+              <span className="toolTipFavorite">Display Favorites</span>
+            </>
+          )}
         </button>
       </div>
       {hideCounter > 0 ? (
