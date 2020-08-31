@@ -1,9 +1,24 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-param-reassign */
 const express = require('express');
 const fs = require('fs');
 
 const app = express();
 app.use(express.static('/build/index.html'));
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+function uniqueid() {
+  let idstr = String.fromCharCode(Math.floor((Math.random() * 25) + 65));
+  do {
+    const ascicode = Math.floor((Math.random() * 42) + 48);
+    if (ascicode < 58 || ascicode > 64) {
+      idstr += String.fromCharCode(ascicode);
+    }
+  } while (idstr.length < 32);
+  newId = idstr;
+  return newId;
+}
 
 app.get('/api/tickets', (request, response) => {
   const data = fs.readFileSync('./data.json');
@@ -35,8 +50,8 @@ app.post('/api/tickets/:ticketId/:done', (request, response) => {
   const tickets = JSON.parse(data);
   const doneTickets = tickets.map((ticket) => {
     if (ticket.id === request.params.ticketId) {
-      if (request.params.done === 'undone') {
-        ticket.done = false;
+      if (request.params.done === 'true') {
+        delete ticket.done;
         response.send(ticket);
         return ticket;
       }
@@ -75,5 +90,19 @@ app.post('/api/tickets/favorite/:ticketId/:favorite', (request, response) => {
     console.log('The file has been saved!');
   });
 });
+
+app.post('/addticket', ((request, response) => {
+  const data = fs.readFileSync('./data.json');
+  newAllTickets = JSON.parse(data);
+  console.log(request.body);
+  const newTicket = request.body;
+  newTicket.id = uniqueid();
+  newAllTickets.push(newTicket);
+  fs.writeFile('./data.json', JSON.stringify(newAllTickets), (err) => {
+    if (err) throw err;
+    console.log('The file has been saved!');
+  });
+  response.send('Submitted');
+}));
 
 module.exports = app;
