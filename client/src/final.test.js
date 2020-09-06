@@ -61,7 +61,6 @@ describe(projectName, () => {
   test('The tickets manager load tickets from 8080 and show them on page with labels', async () => {
     const getAllTicketsMock = await nock('http://localhost:3000/', { allowUnmocked: true })
       .get('/api/tickets')
-      .query(() => true)
       .reply(200, mockData);
     await page.goto('http://localhost:3000/', { waitUntil: 'networkidle0' });
     const elements = await page.$$('.ticket');

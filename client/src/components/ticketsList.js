@@ -25,7 +25,7 @@ function handleLoad () {
 
   return (
     <div>
-      {props.displayFavorites !== false || props.allTicketsLength < 10?
+      {props.displayFavorites !== false?
       <div className="ticketlist">
       {makeTicketsList(ticketListData)}
       </div>

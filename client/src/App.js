@@ -15,8 +15,8 @@ function App() {
   const [allTicketsLength, setAllTicketsLength]= useState();
   async function getTicketsFromServer() {
     const limit = 10;
-    const { data } = displayFavorites !== false? await axios.get(`/api/tickets?page=${0}&limit=${limit}`):await axios.get(`/api/tickets?page=${page}&limit=${limit}`); 
-    await axios.get(`/api/tickets?page=${0}&limit=${limit}`).then(allTicketsData=>
+    const { data } = displayFavorites !== false? await axios.get(`/api/tickets`):await axios.get(`/api/tickets?page=${page}&limit=${limit}`); 
+    await axios.get(`/api/tickets`).then(allTicketsData=>
     setAllTicketsLength(allTicketsData.data.length))
     data.sort((a, b) => (b.creationTime - a.creationTime));
     setPage(prevPage=>prevPage + 1); 
@@ -193,7 +193,6 @@ function App() {
         loadMore={getTicketsFromServer}
         hasMore={hasMore}
         displayFavorites={displayFavorites}
-        allTicketsLength={allTicketsLength}
       />
     </main>
   );
