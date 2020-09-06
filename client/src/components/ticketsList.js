@@ -1,5 +1,6 @@
 import React from 'react';
 import Ticket from './ticket';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 function TicketsList(props) {
   function makeTicketsList(data) {
@@ -16,9 +17,33 @@ function TicketsList(props) {
     return list;
   }
   const ticketListData = props.TicketListData;
+
+function handleLoad () {
+  props.loadMore()
+  console.log(props.hasMore)
+}
+
   return (
-    <div className="ticketlist">
+    <div>
+      {props.displayFavorites !== false || props.allTicketsLength < 10?
+      <div className="ticketlist">
       {makeTicketsList(ticketListData)}
+      </div>
+      :
+      <InfiniteScroll
+      dataLength={ticketListData.length}
+      next={handleLoad}
+      hasMore={props.hasMore}
+      loader={<h4>Loading...</h4>}
+      className="ticketlist"
+      endMessage={
+        <p style={{ textAlign: "center" }}>
+          <b>Yay! You have seen it all</b>
+        </p>
+      }
+      >
+      {makeTicketsList(ticketListData)}
+      </InfiniteScroll>}
     </div>
   );
 }

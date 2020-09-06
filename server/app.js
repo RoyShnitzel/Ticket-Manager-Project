@@ -23,6 +23,12 @@ function uniqueid() {
 app.get('/api/tickets', (request, response) => {
   const data = fs.readFileSync('./data.json');
   const tickets = JSON.parse(data);
+  const { page } = request.query;
+  const { limit } = request.query;
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+
+  const pagedTickets = tickets.slice(startIndex, endIndex);
 
   if (request.query.searchText) {
     const queryParam = request.query.searchText.toLowerCase();
@@ -39,9 +45,10 @@ app.get('/api/tickets', (request, response) => {
       }
       return filteredTicket.includes(queryParam);
     });
-    response.send(newTickets);
+    const newPagedTickets = newTickets.slice(startIndex, endIndex);
+    response.send(page === '0' || page === undefined ? newTickets : newPagedTickets);
   } else {
-    response.send(tickets);
+    response.send(page === '0' || page === undefined ? tickets : pagedTickets);
   }
 });
 
