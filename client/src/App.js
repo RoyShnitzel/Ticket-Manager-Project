@@ -16,12 +16,11 @@ function App() {
   async function getTicketsFromServer() {
     const limit = 10;
     const { data } = displayFavorites !== false? await axios.get(`/api/tickets`):await axios.get(`/api/tickets?page=${page}&limit=${limit}`); 
-    await axios.get(`/api/tickets`).then(allTicketsData=>
-    setAllTicketsLength(allTicketsData.data.length))
+    const allTicketsData = await axios.get(`/api/tickets`)
+    setAllTicketsLength(allTicketsData.data.length)
     data.sort((a, b) => (b.creationTime - a.creationTime));
     setPage(prevPage=>prevPage + 1); 
     setTickets(prevData=>[...prevData,...data]);
-    console.log(page)
     data.length<10? setHasMore(false):displayFavorites !== false? setHasMore(false):setHasMore(true);
   }
   useEffect( () => {
