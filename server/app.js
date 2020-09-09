@@ -25,6 +25,8 @@ app.get('/api/tickets', (request, response) => {
   const tickets = JSON.parse(data);
   const { page } = request.query;
   const { limit } = request.query;
+  const { sort } = request.query;
+  tickets.sort((a, b) => (sort === 'true' ? a.creationTime - b.creationTime : b.creationTime - a.creationTime));
   const startIndex = (page - 1) * limit;
   const endIndex = page * limit;
 
@@ -98,7 +100,7 @@ app.post('/api/tickets/favorite/:ticketId/:favorite', (request, response) => {
   });
 });
 
-app.post('/addticket', ((request, response) => {
+app.post('/addticket', (request, response) => {
   const data = fs.readFileSync('./data.json');
   newAllTickets = JSON.parse(data);
   console.log(request.body);
@@ -110,6 +112,6 @@ app.post('/addticket', ((request, response) => {
     console.log('The file has been saved!');
   });
   response.send('Submitted');
-}));
+});
 
 module.exports = app;
