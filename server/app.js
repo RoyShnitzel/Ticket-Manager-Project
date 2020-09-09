@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-expressions */
 /* eslint-disable no-undef */
 /* eslint-disable no-param-reassign */
 const express = require('express');
@@ -26,7 +27,7 @@ app.get('/api/tickets', (request, response) => {
   const { page } = request.query;
   const { limit } = request.query;
   const { sort } = request.query;
-  tickets.sort((a, b) => (sort === 'true' ? a.creationTime - b.creationTime : b.creationTime - a.creationTime));
+  sort ? tickets.sort((a, b) => (sort === 'true' ? a.creationTime - b.creationTime : b.creationTime - a.creationTime)) : console.log(sort);
   const startIndex = (page - 1) * limit;
   const endIndex = page * limit;
 
