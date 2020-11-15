@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './App.css';
 import axios from 'axios';
 import TicketsList from './components/ticketsList';
@@ -9,13 +9,13 @@ function App() {
   const [tickets, setTickets] = useState([]);
   const [display, setDisplay] = useState(false);
   const [popUp, setPopUp] = useState(false);
-  const [sort, setSort] = useState(true);
-  const [mainSort, setMainSort] = useState(true);
-  const[page,setPage] = useState(1)
+  const [serverSort, setServerSort] = useState(true);
+  const [localSort, setLocalSort] = useState(true);
+  const [page,setPage] = useState(1)
   const [hasMore, setHasMore]= useState(true)
   const [allTickets, setAllTickets]= useState([]);
-  const [valueOfInput,setValueOfInput] = useState('')
-  async function getTicketsFromServer() {
+  const [valueOfInput,setValueOfInput] = useState('');
+  const getTicketsFromServer = useCallback(async function getTicketsFromServer() {
     const limit = 10;
     const { data } = display !== false? await axios.get(`/api/tickets`):await axios.get(`/api/tickets?page=${page}&limit=${limit}&sort=false`); 
     const allTicketsData = await axios.get(`/api/tickets`)
@@ -23,23 +23,24 @@ function App() {
     setPage(prevPage=>prevPage + 1); 
     setTickets(prevData=>[...prevData,...data]);
     data.length<10? setHasMore(false):display !== false? setHasMore(false):setHasMore(true);
-  }
+  },[display])
+
   useEffect( () => {
     getTicketsFromServer();
   }, []);
 
-  async function searchFunc(val) {
+  async function searchFunc(val,displayStatus) {
     const limit = 10;
     const codedVal = encodeURIComponent(val);
     const { data } = await axios.get(`/api/tickets?searchText=${codedVal}&page=${val === ''?1:0}&limit=${limit}`);
     data.sort((a, b) => (b.creationTime - a.creationTime));
     setTickets(data);
-    setDisplay(false);
+    setDisplay(displayStatus);
     val === ''? setHasMore(true):setHasMore(false)
     setPage(2)
   }
 
-  function hideTicket(id) {
+  const hideTicket = useCallback(function hideTicket(id) {
     function applyHide (data) {
       const newTickets = data.map((ticket) => {
         if (ticket.id === id) {
@@ -59,9 +60,9 @@ function App() {
       return applyHide(prevTickets)
     });
   }
-  }
+  },[display])
 
-  function favoriteTicket(id, favorite) {
+  const favoriteTicket = useCallback(function favoriteTicket(id, favorite) {
     setAllTickets((prevTickets) => {
       const newTickets = prevTickets.map((ticket) => {
         if (ticket.id === id) {
@@ -92,9 +93,9 @@ function App() {
       });
       return newTickets;
     });
-  }
+  })
 
-  function doneTicket(id, done) {
+  const doneTicket = useCallback(function doneTicket(id, done) {
     setAllTickets((prevTickets) => {
       const newTickets = prevTickets.map((ticket) => {
         if (ticket.id === id) {
@@ -125,9 +126,9 @@ function App() {
       });
       return newTickets;
     });
-  }
+  })
 
-  function restoreTickets() {
+  const restoreTickets = useCallback(function restoreTickets() {
     function applyRestore(data) {
       const newTickets = data.map((ticket) => {
         ticket.hide = false;
@@ -144,19 +145,19 @@ function App() {
       return applyRestore(prevTickets)
     });
   }
-  }
+  },[display])
 
-  function sortTicketsByDate() {
+  const sortTicketsByDate = useCallback(function sortTicketsByDate() {
     const ticketsClone = display !== false? allTickets.slice():tickets.slice();
     ticketsClone.sort((a, b) => {
       if(display !== false) {
-        if(mainSort){
+        if(localSort){
           return a.creationTime - b.creationTime
         } else {
           return b.creationTime - a.creationTime
         }
     } else {
-        if(sort){
+        if(serverSort){
           axios.get(`/api/tickets?page=1&limit=10&sort=true`).then(tickets => {
             setTickets(tickets.data)
             tickets.data.length<10? setHasMore(false):setHasMore(true);
@@ -171,8 +172,8 @@ function App() {
         }
     }});
     display !== false? setAllTickets(ticketsClone):setTickets(ticketsClone);
-    display !== false? setMainSort(!mainSort):setSort(!sort);
-  };
+    display !== false? setLocalSort(!localSort):setServerSort(!serverSort);
+  },[display,localSort,serverSort,allTickets,tickets])
 
   const displayedTickets = display !== false?  allTickets.filter((ticket) => !ticket.hide):tickets.filter((ticket) => !ticket.hide);
   const favoriteTickets = displayedTickets.filter((ticket) => Boolean(ticket.favorite));
@@ -189,7 +190,7 @@ function App() {
         <SearchInput searchFunc={searchFunc} value={valueOfInput} setValue={setValueOfInput} />
         <button
           className="favoritesDisplay"
-          onClick={() => setDisplay((prevdisplay)=>{if (prevdisplay ==='favorite'){ return false} return 'favorite'})}
+          onClick={() => {setDisplay((prevdisplay)=>{if (prevdisplay ==='favorite'){searchFunc("",false); return false}searchFunc("",'favorite'); return 'favorite'}); setValueOfInput("")}}
         >
           {display === 'favorite'? (
             <>
@@ -205,7 +206,7 @@ function App() {
         </button>
         <button
           className="doneDisplay"
-          onClick={() => setDisplay((prevdisplay)=>{if (prevdisplay ==='done'){ return false} return 'done'})}
+          onClick={() => {setDisplay((prevdisplay)=>{if (prevdisplay ==='done'){searchFunc("",false); return false}searchFunc("",'done'); return 'done'}); setValueOfInput("")}}
         >
           {display === 'done' ? (
             <>

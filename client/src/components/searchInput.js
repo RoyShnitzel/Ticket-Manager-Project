@@ -6,7 +6,7 @@ function SearchInput(props) {
   return (
     <div className="search">
       <i className="fa fa-search" />
-      <input value={props.value} onChange={(e) => {onSearch(e.target.value); props.setValue(e.target.value)}} id="searchInput" />
+      <input value={props.value} onChange={(e) => {onSearch(e.target.value, false); props.setValue(e.target.value)}} id="searchInput" />
     </div>
   );
 }
