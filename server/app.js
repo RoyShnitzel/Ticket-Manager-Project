@@ -5,7 +5,7 @@ const express = require("express");
 const TicketSchema = require("./models/ticketMongo.js");
 
 const app = express();
-app.use(express.static("/build/index.html"));
+app.use(express.static("../client/build"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
